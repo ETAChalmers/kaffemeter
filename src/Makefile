@@ -21,10 +21,6 @@ all : $(hexfiles)
 %.hex : %.elf
 	$(avr_objcopy) -O ihex $< $@
 
-%.hex.upload : %.hex
-	$(avrdude) -p $(mmcu) -P /dev/ttyACM0 -c stk500v2 \
-	           -U flash:w:$<
-
 clean :
 	rm -f *.hex
 
