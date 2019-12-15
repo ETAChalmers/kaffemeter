@@ -1,8 +1,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 #include "main.h"
 
-#define FOSC 20000000 // Clock Speed
+#define FOSC 2500000 // Clock Speed
 //#define FOSC 8000000 // Clock Speed
 //#define BAUD 19200
 #define BAUD 1200
@@ -27,7 +28,8 @@ int main(void)
   //uart_send('h');
 
   while(1) {
-    uart_send(0x73);
+    uart_send('c');
+    _delay_ms(100);
   }          // Loop forever, interrupts do the rest
 }
 
