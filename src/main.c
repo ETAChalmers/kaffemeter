@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdlib.h>
 #include "main.h"
 
 #define FOSC 2500000 // Clock Speed
@@ -14,6 +15,7 @@ int main(void)
 
   //init_clock();
   init_uart(MYUBRR);
+  init_adc();
 
   // Setup the I/O for the status LED
   DDRB |= (1<<7);         // Set PortB Pin7 as an output
@@ -27,8 +29,21 @@ int main(void)
   //uart_send(0x0E);
   //uart_send('h');
 
+  char string[3];
+
   while(1) {
-    uart_send('c');
+    uart_send(0x15);  // Clear display
+
+    uint8_t data = read_adc();
+    string[0] = 0;
+    string[1] = 0;
+    string[2] = 0;
+    ltoa(data, string, 10);
+
+    uart_send(string[2]);
+    uart_send(string[1]);
+    uart_send(string[0]);
+
     _delay_ms(100);
   }          // Loop forever, interrupts do the rest
 }
@@ -77,4 +92,23 @@ void init_uart(unsigned int ubrr) {
   //UCSR0C = (1<<USBS0)|(3<<UCSZ00);
 
   sei();            //Enable global interrupts
+}
+
+void init_adc() {
+  cli();
+
+  ADMUX |= (1 << MUX1); // Use ADC2
+  ADMUX |= (1 << ADLAR); // Left adjust result (highest 8-bits in ADCH reg)
+  ADCSRA |= (1 << ADEN);  // Activate ADC
+  ADCSRA |= (1 << ADPS2); // Set ADC prescale to 16. Results in 156 kHz.
+
+  sei();
+}
+
+uint8_t read_adc() {
+  ADCSRA |= (1 << ADSC); // Start ADC conversion
+
+  while(ADCSRA & (1 << ADSC));  // Wait for measurement to complete
+
+  return ADCH;
 }
