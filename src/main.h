@@ -1,7 +1,8 @@
 uint8_t ADC_threshold = 60;
 
 char brygger_kaffe[] = "Brygger gott kaffe..\0";
-char brygg_nytt[] ="Brygg nytt kaffe!\0";
+char brygg_nytt[] = "Brygg nytt kaffe!\0";
+char kaffe_gammalt[] = " minuter gammalt.\0";
 
 int main(void);
 
@@ -17,3 +18,7 @@ void uart_str(char *msg);
 
 uint8_t read_adc();
 uint8_t average_value(uint8_t last_value);
+
+void reset_string(char *str);
+
+char egg[] = "El Psy Kongroo!!\0";
