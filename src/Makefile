@@ -1,4 +1,4 @@
-F_CPU = 20000000
+F_CPU = 2500000
 mmcu = atmega168
 
 cfiles   := $(wildcard *.c)
