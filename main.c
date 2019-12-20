@@ -11,6 +11,7 @@
 
 uint8_t brygger_status = 0;
 uint8_t nybryggt_status = 0;
+uint8_t last_min = 255;
 
 volatile uint16_t second_counter = 0;
 
@@ -54,6 +55,9 @@ int main(void)
         if(random == 0) {
           uart_str(egg);
         }
+        else if(random == 1) {
+          uart_str(golv);
+        }
         else {
           uart_str(brygger_kaffe);
         }
@@ -66,6 +70,8 @@ int main(void)
       if(nybryggt_status == 1) {  // If brew completed
         activate_counter1();
         // Send CAN message
+
+        nybryggt_status = 0;
       }
       if(second_counter > 60*90 && brygger_status != 0) {  // If coffee is old
         deactivate_counter1();
@@ -74,19 +80,27 @@ int main(void)
         brygger_status = 0;
       }
       else if(brygger_status != 0) {   // If brew is finished
-        uart_send(0x15);  // Clear display
         reset_string(string);
         reset_string(time);
 
-        itoa(second_counter/60, time, 10);  // Convert time to string
+        if(second_counter/60 != last_min) { // Only update display if new minute
+          uart_send(0x15);  // Clear display
 
-        // Build output string
-        strcat(string, time);
-        strcat(string, kaffe_gammalt);
+          itoa(second_counter/60, time, 10);  // Convert time to string
 
-        uart_str(string);
+          // Build output string
+          strcat(string, time);
+          if(second_counter/60 == 1) {
+            strcat(string, kaffe_gammalt_singular);
+          }
+          else {
+            strcat(string, kaffe_gammalt);
+          }
 
-        _delay_ms(10000); // Delay 1 min, to reduce flicker
+          uart_str(string);
+        }
+
+        last_min = second_counter/60;
       }
     }
   }
