@@ -47,7 +47,7 @@ int main(void)
 
     // Check current to kaffebryggare
     if(result > ADC_threshold) {  // Current is high
-      if(brygger_status != 1) {   // If starting to brew
+      if(brygger_status == 0) {   // If starting to brew
         uart_send(0x15);  // Clear display
 
         // Write do display
@@ -72,14 +72,14 @@ int main(void)
         // Send CAN message
 
         nybryggt_status = 0;
+        brygger_status = 0;
       }
-      if(second_counter > 60*90 && brygger_status != 0) {  // If coffee is old
+      else if(second_counter > 60*90) {  // If coffee is old
         deactivate_counter1();
         uart_send(0x15);  // Clear display
         uart_str(brygg_nytt);
-        brygger_status = 0;
       }
-      else if(brygger_status != 0) {   // If brew is finished
+      else if(brygger_status == 0) {   // If brew is finished
         reset_string(string);
         reset_string(time);
 
