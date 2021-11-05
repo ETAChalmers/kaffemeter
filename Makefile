@@ -9,7 +9,9 @@ avr_objcopy = avr-objcopy
 avr_size = avr-size
 avrdude = avrdude
 
-CFLAGS   = -mmcu=$(mmcu) -DF_CPU=$(F_CPU) -pipe -Wall -O2
+AVRDUDE_PROGRAMMER = avrisp2
+
+CFLAGS   = -mmcu=$(mmcu) -DF_CPU=$(F_CPU) -pipe -Wall -O2 -std=c99
 MAPFLAGS = -Wl,-Map,
 
 all : $(hexfiles)
@@ -20,6 +22,9 @@ all : $(hexfiles)
 
 %.hex : %.elf
 	$(avr_objcopy) -O ihex $< $@
+
+flash : $(hexfiles)
+	$(avrdude) -c $(AVRDUDE_PROGRAMMER) -U flash:w:$(hexfiles)
 
 clean :
 	rm -f *.hex
