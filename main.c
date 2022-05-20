@@ -1,13 +1,13 @@
+#define F_CPU 8000000 // Clock Speed
+#define BAUD 1200
+#define MYUBRR F_CPU/16/BAUD-1
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdlib.h>
 #include "main.h"
 #include <string.h>
-
-#define FOSC 2500000 // Clock Speed
-#define BAUD 1200
-#define MYUBRR FOSC/16/BAUD-1
 
 uint8_t brygger_status = 0;
 uint8_t nybryggt_status = 0;
